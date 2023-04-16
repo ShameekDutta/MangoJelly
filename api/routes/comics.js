@@ -25,7 +25,13 @@ router.get('/',(req,res,next)=>{
             }
         }
     }
-    Comic.find()
+    var searchText = (req.query.qs)?req.query.qs:'';
+    Comic.find({
+        $or: [
+            { name: { $regex: searchText } },
+            { author: { $regex: searchText } },
+        ],
+        })
         .sort(sortOptions)
         .select("name author published price discount pages condition _id")
         .exec()
