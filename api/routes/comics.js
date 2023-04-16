@@ -30,7 +30,6 @@ router.get('/',(req,res,next)=>{
         .select("name author published price discount pages condition _id")
         .exec()
         .then(docs=>{
-            console.log(docs);
             const response={
                 count: docs.length,
                 Comics: docs.map(doc=>{
@@ -50,6 +49,18 @@ router.get('/',(req,res,next)=>{
                     }
                 })
             };
+            if(req.body.filter){
+                if(req.body.filter.by=='Price Range'){
+                    const max=req.body.filter.max;
+                    const min=req.body.filter.min;
+                    response.Comics=response.Comics.filter(comic=>{
+                        let isValid = true;
+                        isValid = comic.price>=min && comic.price<=max;
+                        return isValid;
+                    });
+                }
+            }
+            response.count=response.Comics.length;
             res.status(200).json(response);
         })
         .catch(err=>{
