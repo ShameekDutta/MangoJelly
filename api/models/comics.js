@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//defining schema for comic
 const comicSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: { type:String, required: true},

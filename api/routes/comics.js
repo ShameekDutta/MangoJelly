@@ -5,8 +5,10 @@ const mongoose = require('mongoose');
 
 const Comic = require('../models/comics');
 
+//Get Comics function
 router.get('/',(req,res,next)=>{
     var sortOptions = {};
+    //checking if sort conditions are provided
     if(req.body.sort){
         if(req.body.sort.by == 'name'){
             if(req.body.sort.order == 'Ascending'){
@@ -25,7 +27,9 @@ router.get('/',(req,res,next)=>{
             }
         }
     }
+    //checking if search text is present in query
     var searchText = (req.query.qs)?req.query.qs:'';
+    //query the database to find comics
     Comic.find({
         $or: [
             { name: { $regex: searchText } },
@@ -55,6 +59,7 @@ router.get('/',(req,res,next)=>{
                     }
                 })
             };
+            //checking if filtering is required
             if(req.body.filter){
                 if(req.body.filter.by=='Price Range'){
                     const max=req.body.filter.max;
@@ -77,7 +82,9 @@ router.get('/',(req,res,next)=>{
         });
 });
 
+//add comic function
 router.post('/add',(req,res,next)=>{
+    //adding data to db collection
     const comic = new Comic({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -118,7 +125,9 @@ router.post('/add',(req,res,next)=>{
         });
 });
 
+//get comib by id function
 router.get('/:comicID',(req,res,next)=>{
+    //taking id given in req parameters
     const id = req.params.comicID;
     Comic.findById(id)
         .select("name author published price discount pages condition _id")
@@ -139,9 +148,12 @@ router.get('/:comicID',(req,res,next)=>{
     });
 });
 
+//update comic function
 router.patch('/update/:comicID',(req,res,next)=>{
+    //taking comic id from req parameters
     const id = req.params.comicID;
     const updateComic={};
+    //updating the attributes provided in req body
     for(const key in req.body){
         updateComic[`${key}`] = `${req.body[key]}`;
     }
@@ -165,6 +177,7 @@ router.patch('/update/:comicID',(req,res,next)=>{
         });
 });
 
+//delete comic functionality
 router.delete('/delete/:comicID',(req,res,next)=>{
     const id = req.params.comicID;
     Comic.deleteOne({_id: id})

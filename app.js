@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const comicRoutes = require('./api/routes/comics');
 
+//setting db options
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -14,6 +15,7 @@ const options = {
     family: 4
 };
 
+//connecting to db
 mongoose.connect(
     'mongodb+srv://user1:mangojelly@mangojelly.soryufr.mongodb.net/?retryWrites=true&w=majority',options
 );
