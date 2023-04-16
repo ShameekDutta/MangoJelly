@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const bodyParser = express('body-parser');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const comicRoutes = require('./api/routes/comics');
@@ -32,7 +32,7 @@ app.use((req,res,next)=>{
     }
     next();
 });
-
+app.use(bodyParser.json());
 app.use('/comics', comicRoutes);
 
 app.use((req,res,next)=>{

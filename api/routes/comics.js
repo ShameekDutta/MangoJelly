@@ -13,7 +13,7 @@ router.get('/',(req,res,next)=>{
             console.log(docs);
             const response={
                 count: docs.length,
-                products: docs.map(doc=>{
+                Comics: docs.map(doc=>{
                     return{
                         name: doc.name,
                         author: doc.author,
@@ -40,7 +40,7 @@ router.get('/',(req,res,next)=>{
         });
 });
 
-router.post('/',(req,res,next)=>{
+router.post('/add',(req,res,next)=>{
     const comic = new Comic({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -55,8 +55,6 @@ router.post('/',(req,res,next)=>{
         .save()
         .then(result=>{
             console.log("Result is - " + result.name, result.price, result.author, result.discount, result.published, result.pages, result.condition);
-            let prod = {};
-            console.log("Result is - " + prod);
             res.status(201).json({
                 "message":'Created product successfully',
                 "createdProduct": {
@@ -92,11 +90,7 @@ router.get('/:comicID',(req,res,next)=>{
             console.log("From database", doc);
             if (doc){
                 res.status(200).json({
-                    product: doc,
-                    request:{
-                        type:'GET',
-                        url:'http://localhost:3000/comics'
-                    }
+                    comic: doc
                 });
             } else {
                 res.status(404).json({message: "No valid entry found"});
@@ -108,13 +102,13 @@ router.get('/:comicID',(req,res,next)=>{
     });
 });
 
-router.patch('/:comicID',(req,res,next)=>{
+router.patch('/update/:comicID',(req,res,next)=>{
     const id = req.params.comicID;
-    const updateOps={};
-    for(const ops of req.body){
-        updateOps[ops.propName] = ops.value;
+    const updateComic={};
+    for(const key in req.body){
+        updateComic[`${key}`] = `${req.body[key]}`;
     }
-    Comic.updateOne({_id: id}, { $set:updateOps}).
+    Comic.updateOne({_id: id}, { $set:updateComic}).
         exec()
         .then(result=>{
             console.log(result);
@@ -134,18 +128,13 @@ router.patch('/:comicID',(req,res,next)=>{
         });
 });
 
-router.delete('/:comicID',(req,res,next)=>{
+router.delete('/delete/:comicID',(req,res,next)=>{
     const id = req.params.comicID;
-    Comic.remove({_id: id})
+    Comic.deleteOne({_id: id})
         .exec()
         .then(result=>{
             res.status(200).json({
-                message: 'Comic deleted',
-                request:{
-                    type: 'POST',
-                    url: 'http://localhost:3000/comics',
-                    body:{name:'String', price:'Number'}
-                }
+                message: 'Comic deleted'
             });
         })
         .catch(err=>{
