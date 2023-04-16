@@ -6,7 +6,27 @@ const mongoose = require('mongoose');
 const Comic = require('../models/comics');
 
 router.get('/',(req,res,next)=>{
+    var sortOptions = {};
+    if(req.body.sort){
+        if(req.body.sort.by == 'name'){
+            if(req.body.sort.order == 'Ascending'){
+                sortOptions.name=1;
+            }
+            else if(req.body.sort.order=='Descending'){
+                sortOptions.name=-1;
+            }
+        }
+        else if(req.body.sort.by == 'price'){
+            if(req.body.sort.order=='Ascending'){
+                sortOptions.price=1;
+            }
+            else if(req.body.sort.order=='Descending'){
+                sortOptions.price=-1;
+            }
+        }
+    }
     Comic.find()
+        .sort(sortOptions)
         .select("name author published price discount pages condition _id")
         .exec()
         .then(docs=>{
